@@ -1,0 +1,45 @@
+### Maven ###
+target/
+
+### Maven Wrapper (NE PAS IGNORER) ###
+# .mvn/wrapper/maven-wrapper.jar
+
+### Logs ###
+*.log
+logs/
+
+### Environment ###
+.env
+*.env
+application-local.properties
+application-local.yml
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
