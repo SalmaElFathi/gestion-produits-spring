@@ -93,7 +93,17 @@
 		    <version>5.8.0</version>
 		    <scope>test</scope>
 		</dependency>
-
+<!-- Spring Boot Actuator (pour monitoring) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    
+    <!-- Micrometer pour Prometheus -->
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
 	</dependencies>
 
 	<build>

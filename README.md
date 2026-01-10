@@ -1,123 +1,131 @@
 # Gestion Produits
 
 ## Description
-
 Projet Spring Boot pour gérer des produits avec interface web, base de données et tests automatisés.
-Le projet inclut :
 
-* Tests unitaires
-* Tests d'intégration
-* Tests Selenium end-to-end
-* Documentation API via Swagger
+**Fonctionnalités** :
+* CRUD complet (Créer, Lire, Modifier, Supprimer)
+* Interface web avec Thymeleaf
+* API REST documentée (Swagger)
+* Tests automatisés (Unitaires, Intégration, Selenium)
+* Containerisation Docker
+* Pipeline CI/CD avec Jenkins
+* Déploiement Kubernetes
+* Monitoring avec Prometheus et Grafana
 
-Technologies utilisées :
-
-* Java 17
-* Spring Boot 3.x
-* Spring Data JPA
-* Thymeleaf
-* MySQL / H2
-* Selenium WebDriver
-* JUnit 5 et Mockito
+**Technologies** :
+* Java 17, Spring Boot 3.x, Spring Data JPA
+* MySQL (production) / H2 (tests)
+* Thymeleaf, Bootstrap
+* JUnit 5, Mockito, Selenium WebDriver
+* Docker, Kubernetes, Jenkins
+* Prometheus, Grafana, Actuator
 * Swagger (springdoc-openapi)
 
 ---
 
 ## Prérequis
 
-* Java 17 installé
+* Java 17
 * Maven 3.8+
-* Navigateur Chrome pour Selenium
-* MySQL (si utilisation en production)
+* Docker & Docker Compose
+* Chrome (pour tests Selenium)
 
 ---
 
-## Installation et configuration
+## Installation
 
-1. Cloner le projet :
-
+### 1. Cloner le projet
 ```bash
-git clone <url-du-projet>
+git clone https://github.com/SalmaElFathi/gestion-produits-spring.git
 cd gestion-produits
 ```
 
-2. Configurer la base de données :
+### 2. Configurer l'environnement
+```bash
+cp .env.example .env
+# Éditer .env avec vos valeurs
+```
 
-* En développement : H2 (par défaut pour les tests)
-* En production : MySQL
+### 3. Lancer avec Docker Compose
+```bash
+docker-compose up --build
+```
+
+L'application sera accessible sur : **http://localhost:5000**
 
 ---
 
-## Types de tests
+## Tests
 
 Le projet contient **3 types de tests** :
 
-### 1. Tests unitaires
+| Type | Description | Commande |
+|------|-------------|----------|
+| **Unitaires** | Logique métier (Mockito) | `mvn test -Dgroups=Unitaire` |
+| **Intégration** | Couches applicatives (H2) | `mvn test -Dgroups=Integration` |
+| **Selenium** | Tests end-to-end (Chrome) | `mvn verify -Dgroups=selenium` |
 
-* Testent la logique métier avec **JUnit 5** et **Mockito**.
-* Lancement Maven :
-
+**Lancer tous les tests** :
 ```bash
-mvn test -Dgroups=Unitaire
-```
-
-### 2. Tests d'intégration
-
-* Testent la collaboration entre les couches avec **H2 en mémoire**.
-* Lancement Maven :
-
-```bash
-mvn test -Dgroups=Integration
-```
-
-### 3. Tests Selenium
-
-* Testent l'application end-to-end avec le navigateur Chrome.
-* Lancement Maven :
-
-```bash
-mvn test -Dgroups=selenium
+mvn verify
 ```
 
 ---
 
-## Commandes Maven utiles
+## Documentation API
 
-* Lancer tous les tests :
+**Swagger UI** : http://localhost:5000/swagger-ui.html
 
-```bash
-mvn test
+**Endpoints Actuator** :
+* Health : http://localhost:5000/actuator/health
+* Prometheus : http://localhost:5000/actuator/prometheus
+
+---
+
+## CI/CD Pipeline
+
+Le pipeline Jenkins automatise :
+1. Build Maven
+2. Tests (Unitaires, Intégration, Selenium)
+3. Build Docker image
+4. Push vers Docker Hub
+5. Déploiement Kubernetes
+6. Health check
+
+---
+
+## Monitoring
+
+**Prometheus + Grafana** pour surveiller :
+* Métriques JVM
+* Performances applicatives
+* Santé des services
+
+---
+
+## Structure du projet
 ```
-
-* L'application sera accessible sur : **http://localhost:5000**
-
----
-
-## Documentation API (Swagger)
-
-Une fois l'application lancée, accéder à la documentation Swagger :
-
-**http://localhost:5000/swagger-ui.html**
-
----
-
-## Dépendances importantes
-
-* **Spring Boot Starter Web** : serveur web
-* **Spring Boot Starter Thymeleaf** : template engine
-* **Spring Boot Starter Data JPA** : accès base de données
-* **H2 Database** : base en mémoire pour tests
-* **MySQL Connector** : pour MySQL en prod
-* **Spring Boot DevTools** : reload automatique en dev
-* **JUnit 5** : tests unitaires
-* **Mockito** : mocks pour tests unitaires
-* **Selenium Java + WebDriverManager** : tests end-to-end
-* **Springdoc OpenAPI** : Swagger UI pour documenter l'API
+gestion-produits/
+├── src/
+│   ├── main/java/          # Code source
+│   ├── main/resources/     # Configuration, templates
+│   └── test/java/          # Tests
+├── k8s/                    # Manifests Kubernetes
+├── Dockerfile              # Image Docker
+├── docker-compose.yml      # Orchestration locale
+├── Jenkinsfile             # Pipeline CI/CD
+├── .env.example            # Template variables
+└── pom.xml                 # Dépendances Maven
+```
 
 ---
 
 ## Notes importantes
 
-* Selenium nécessite que le **navigateur Chrome et le driver soient à jour**.
-* H2 est utilisé pour éviter d'altérer la base MySQL en développement et tests.
-* Le port par défaut est **5000**
+* **Port par défaut** : 5000
+* **H2** utilisé pour les tests 
+* **Chrome** et ChromeDriver gérés automatiquement par WebDriverManager
+
+
+---
