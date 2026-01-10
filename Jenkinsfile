@@ -18,14 +18,14 @@ pipeline {
         stage('2️⃣ Build Maven') {
             steps {
                 echo '🔨 Compilation du projet...'
-                bat 'mvn clean compile'
+                sh 'mvn clean compile'
             }
         }
         
         stage('3️⃣ Tests Unitaires') {
             steps {
                 echo '🧪 Exécution des tests unitaires...'
-                bat 'mvn test -Dgroups=Unitaire'
+                sh 'mvn test -Dgroups=Unitaire'
             }
             post {
                 always {
@@ -37,21 +37,21 @@ pipeline {
         stage('4️⃣ Tests d\'Intégration') {
             steps {
                 echo '🔗 Exécution des tests d\'intégration...'
-                bat 'mvn test -Dgroups=Integration'
+                sh 'mvn test -Dgroups=Integration'
             }
         }
         
         stage('5️⃣ Tests Selenium') {
             steps {
                 echo '🌐 Exécution des tests end-to-end...'
-                bat 'mvn verify -Dgroups=selenium'
+                sh 'mvn verify -Dgroups=selenium'
             }
         }
         
         stage('6️⃣ Package Application') {
             steps {
                 echo '📦 Création du fichier JAR...'
-                bat 'mvn package -DskipTests'
+                sh 'mvn package -DskipTests'
             }
         }
         
