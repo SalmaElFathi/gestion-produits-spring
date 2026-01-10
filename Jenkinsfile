@@ -7,7 +7,7 @@ pipeline {
         VERSION = "${BUILD_NUMBER}"
         DOCKER_HOST = 'tcp://host.docker.internal:2375'
 }
-    }
+
 
 
     tools {
