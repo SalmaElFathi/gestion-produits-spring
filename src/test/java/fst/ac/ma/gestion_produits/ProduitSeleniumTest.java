@@ -22,7 +22,6 @@ class ProduitSeleniumTest {
 
     @LocalServerPort
     private int port;
-
     private WebDriver driver;
     private WebDriverWait wait;
     private String baseUrl;
@@ -42,7 +41,6 @@ class ProduitSeleniumTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         baseUrl = "http://localhost:" + port;
 
-        // Attendre que l'application soit vraiment prête
         wait.until(d -> {
             try {
                 driver.get(baseUrl);

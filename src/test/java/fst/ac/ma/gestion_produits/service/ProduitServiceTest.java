@@ -133,9 +133,4 @@ class ProduitServiceTest {
         assertEquals("Updated Laptop", result.getDesignation());
         assertEquals(20, result.getQuantite());
         verify(produitRepository).save(produit);
-    }
-
-  
-
-  
-}
+    }}

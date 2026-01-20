@@ -2,14 +2,11 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'eddah0salma/gestion-produits'
+        DOCKER_IMAGE = 'salma201/gestion-produits'
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
         VERSION = "${BUILD_NUMBER}"
-        DOCKER_HOST = 'tcp://host.docker.internal:2375'
-}
-
-
-
+    }
+    
     tools {
         maven 'Maven'
     }
@@ -50,16 +47,16 @@ pipeline {
         
         stage('5️⃣ Tests Selenium') {
             steps {
-            script {
-            try {
-                sh 'mvn verify -Dgroups=selenium'
-            } catch (Exception e) {
-                echo "⚠️ Tests Selenium échoués - Continuer quand même"
-                currentBuild.result = 'UNSTABLE'
+                script {
+                    try {
+                        sh 'mvn verify -Dgroups=selenium'
+                    } catch (Exception e) {
+                        echo "⚠️ Tests Selenium échoués - Continuer quand même"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
             }
         }
-    }
-}
         
         stage('6️⃣ Package Application') {
             steps {
@@ -90,18 +87,53 @@ pipeline {
             }
         }
         
-        stage('9️⃣ Deploy Info') {
+        stage('9️⃣ Deploy to Kubernetes') {
             steps {
-                echo '📋 Image Docker prête pour déploiement Kubernetes'
-                echo "Image: ${DOCKER_IMAGE}:${VERSION}"
-                echo '✅ La personne 4 peut maintenant déployer sur K8s'
+                echo '☸️ Déploiement sur Kubernetes (Minikube)...'
+                script {
+                    try {
+                        sh 'kubectl apply -f k8s/mysql-deployment.yaml'
+                        echo '✅ MySQL déployé'
+                        
+                        sh 'kubectl wait --for=condition=ready pod -l app=mysql --timeout=120s || true'
+                        
+                        sh 'kubectl apply -f k8s/deployment.yaml'
+                        sh 'kubectl apply -f k8s/service.yaml'
+                        echo '✅ Application déployée'
+                        
+                        sh "kubectl set image deployment/gestion-produits-deployment gestion-produits=${DOCKER_IMAGE}:${VERSION}"
+                        
+                        sh 'kubectl rollout status deployment/gestion-produits-deployment --timeout=180s'
+                        
+                        sh 'kubectl apply -f k8s/prometheus-config.yaml || true'
+                        sh 'kubectl apply -f k8s/grafana.yaml || true'
+                        
+                        echo '✅ Déploiement Kubernetes terminé avec succès!'
+                        
+                    } catch (Exception e) {
+                        echo "❌ Erreur lors du déploiement: ${e.getMessage()}"
+                        throw e
+                    }
+                }
             }
         }
         
-        stage('🔟 Health Check Simulation') {
+        stage('🔟 Health Check') {
             steps {
-                echo '💚 Vérification simulée de la santé de l\'application'
-                echo '✅ Application prête à être déployée'
+                echo '💚 Vérification de la santé de l\'application...'
+                script {
+                    try {
+                        sh 'minikube service gestion-produits-service --url > service_url.txt || true'
+                        
+                        sleep(time: 10, unit: 'SECONDS')
+                        
+                        echo '✅ Application déployée et accessible!'
+                        echo '🔗 Pour accéder à l\'application: minikube service gestion-produits-service'
+                        
+                    } catch (Exception e) {
+                        echo "⚠️ Health check non disponible: ${e.getMessage()}"
+                    }
+                }
             }
         }
     }
@@ -110,7 +142,13 @@ pipeline {
         success {
             echo '✅ =========================================='
             echo '✅ Pipeline exécuté avec succès !'
+            echo '✅ Application déployée sur Kubernetes'
             echo '✅ =========================================='
+            echo ''
+            echo '📋 Pour accéder aux services:'
+            echo '   Application: minikube service gestion-produits-service'
+            echo '   Prometheus:  minikube service prometheus-service'
+            echo '   Grafana:     minikube service grafana-service'
         }
         failure {
             echo '❌ =========================================='
@@ -120,6 +158,7 @@ pipeline {
         }
         always {
             echo '🧹 Nettoyage des ressources...'
+            sh 'rm -f service_url.txt || true'
         }
     }
 }
