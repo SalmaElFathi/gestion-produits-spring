@@ -1,0 +1,32 @@
+- name: Installer Kubernetes (tous les noeuds)
+  hosts: all
+  become: yes
+  tasks:
+    - name: Installer dépendances
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Ajouter clé Kubernetes
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Ajouter repo Kubernetes
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+    - name: Installer kubelet kubeadm kubectl
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+
+    - name: Bloquer versions Kubernetes
+      command: apt-mark hold kubelet kubeadm kubectl

@@ -64,6 +64,18 @@ pipeline {
                 sh 'mvn package -DskipTests'
             }
         }
+   
+	  	stage('Provision Infrastructure (Terraform)') {
+    		steps {
+        		echo 'Provisioning infrastructure via Terraform + Vagrant'
+        		sh '''
+          		  cd terraform
+          		  terraform init
+           		  terraform apply -auto-approve
+       			 '''
+  				  }
+				}
+
         
         stage('Build Docker Image') {
             steps {

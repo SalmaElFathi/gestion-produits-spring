@@ -1,0 +1,43 @@
+- name: Installer Docker sur toutes les machines
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Mise à jour APT
+      apt:
+        update_cache: yes
+
+    - name: Installer dépendances
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Ajouter clé Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Ajouter repo Docker
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+
+    - name: Installer Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Démarrer Docker
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ajouter utilisateur au groupe docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes

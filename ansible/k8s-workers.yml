@@ -1,0 +1,6 @@
+- name: Join workers au cluster
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Join cluster
+      command: "{{ hostvars[groups['masters'][0]].join_command }}"
