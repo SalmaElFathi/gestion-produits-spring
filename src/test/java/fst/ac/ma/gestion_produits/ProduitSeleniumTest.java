@@ -42,10 +42,11 @@ class ProduitSeleniumTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         baseUrl = "http://localhost:" + port;
 
+        // Attendre que la page se charge
         wait.until(d -> {
             try {
                 driver.get(baseUrl);
-                return driver.getTitle() != null;
+                return driver.getTitle() != null && !driver.getTitle().isEmpty();
             } catch (Exception e) {
                 return false;
             }
@@ -62,15 +63,16 @@ class ProduitSeleniumTest {
     @Test
     @Order(1)
     void testAjouterProduit() {
-        driver.findElement(By.className("btn-ajouter")).click();
+        driver.findElement(By.className("btn-add")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("addModal")));
 
         driver.findElement(By.id("designation")).sendKeys("Laptop");
         driver.findElement(By.id("quantite")).sendKeys("10");
         driver.findElement(By.id("prix")).sendKeys("5000");
 
-        driver.findElement(By.xpath("//form[@id='addForm']//button[@type='submit']")).click();
+        driver.findElement(By.cssSelector("#addForm button[type='submit']")).click();
 
+        // Vérifier que le produit apparaît dans le tableau
         wait.until(ExpectedConditions.textToBePresentInElementLocated(
                 By.tagName("tbody"), "Laptop"));
     }
@@ -78,15 +80,19 @@ class ProduitSeleniumTest {
     @Test
     @Order(2)
     void testModifierProduit() {
-        driver.findElement(By.className("btn-edit")).click();
+        // Cliquer sur le bouton modifier du premier produit
+        WebElement btnEdit = driver.findElement(By.className("btn-edit"));
+        btnEdit.click();
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("editModal")));
 
         WebElement editDesignation = driver.findElement(By.id("editDesignation"));
         editDesignation.clear();
         editDesignation.sendKeys("Laptop Pro");
 
-        driver.findElement(By.xpath("//form[@id='editForm']//button[@type='submit']")).click();
+        driver.findElement(By.cssSelector("#editForm button[type='submit']")).click();
 
+        // Vérifier que le nom du produit a changé
         wait.until(ExpectedConditions.textToBePresentInElementLocated(
                 By.tagName("tbody"), "Laptop Pro"));
     }
@@ -94,10 +100,14 @@ class ProduitSeleniumTest {
     @Test
     @Order(3)
     void testSupprimerProduit() {
-        driver.findElement(By.className("btn-delete")).click();
+        // Cliquer sur le bouton supprimer du premier produit
+        WebElement btnDelete = driver.findElement(By.className("btn-delete"));
+        btnDelete.click();
+
         wait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
 
+        // Vérifier que le produit a disparu
         wait.until(ExpectedConditions.invisibilityOfElementLocated(
                 By.xpath("//td[contains(text(),'Laptop Pro')]")));
     }
@@ -107,5 +117,6 @@ class ProduitSeleniumTest {
     void testAfficherListeProduits() {
         String pageSource = driver.getPageSource();
         assertNotNull(pageSource);
+        assertTrue(pageSource.contains("<tbody>")); // Vérifie que le tableau est présent
     }
 }
