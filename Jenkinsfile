@@ -66,15 +66,17 @@ pipeline {
         }
    
 	  	stage('Provision Infrastructure (Terraform)') {
-    		steps {
-        		echo 'Provisioning infrastructure via Terraform + Vagrant'
-        		sh '''
-          		  cd terraform
-          		  terraform init
-           		  terraform apply -auto-approve
-       			 '''
-  				  }
-				}
+			    steps {
+			        echo 'Provisioning infrastructure via Terraform + Vagrant'
+			        sh '''
+			          cd terraform
+			          rm -rf .terraform .terraform.lock.hcl
+			          terraform init
+			          terraform apply -auto-approve
+			        '''
+			    }
+			}
+
 
         
         stage('Build Docker Image') {

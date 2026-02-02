@@ -22,6 +22,8 @@ resource "null_resource" "vagrant_up" {
   provisioner "local-exec" {
     command     = "vagrant up"
     working_dir = path.module
+    interpreter = ["/bin/bash", "-c"]
+    
   }
 }
 

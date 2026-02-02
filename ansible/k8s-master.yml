@@ -14,5 +14,13 @@
         chown -R vagrant:vagrant /home/vagrant/.kube
 
     - name: Installer Flannel
-      become: false
+      become_user: vagrant
       command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+    - name: Récupérer commande join
+      command: kubeadm token create --print-join-command
+      register: join_cmd
+
+    - name: Sauvegarder join command
+      set_fact:
+        join_command: "{{ join_cmd.stdout }}"
