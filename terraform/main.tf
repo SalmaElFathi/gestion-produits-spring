@@ -14,18 +14,16 @@ terraform {
 ########################################
 
 resource "null_resource" "vagrant_up" {
-
   triggers = {
     vagrantfile_hash = filesha256("${path.module}/Vagrantfile")
   }
 
   provisioner "local-exec" {
-    command     = "vagrant up"
+    command     = "cmd.exe /c vagrant up"
     working_dir = path.module
-    interpreter = ["/bin/bash", "-c"]
-    
   }
 }
+
 
 ########################################
 # 2️⃣ Provisionnement Ansible
