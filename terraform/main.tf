@@ -18,12 +18,10 @@ resource "null_resource" "vagrant_up" {
     vagrantfile_hash = filesha256("${path.module}/Vagrantfile")
   }
 
-  provisioner "local-exec" {
-    command     = "cmd.exe /c vagrant up"
-    working_dir = path.module
-  }
+provisioner "local-exec" {
+  command     = "vagrant up"
+  working_dir = path.module
 }
-
 
 ########################################
 # 2️⃣ Provisionnement Ansible
