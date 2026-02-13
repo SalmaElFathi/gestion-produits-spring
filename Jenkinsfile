@@ -91,6 +91,7 @@ pipeline {
             steps {
                 echo 'Application des secrets Kubernetes...'
                 sh 'kubectl apply -f k8s/gestion-produits-secrets.yaml'
+
             }
         }
         
